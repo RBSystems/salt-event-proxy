@@ -36,11 +36,11 @@ func QueueEvent(context echo.Context) error {
 	//Salt path is /Type/Building/Room
 	vals := strings.Split(event.Hostname, "-")
 
-	saltPath := fmt.Sprintf("'%q/%q/%q'", event.Event.EventCause.String(), vals[0], vals[1])
+	saltPath := fmt.Sprintf("%s/%s/%s", event.Event.EventCause.String(), vals[0], vals[1])
 	b, err := json.Marshal(event)
 
 	//clean the value, escaping all single quotes
-	eventToSend := fmt.Sprintf("'%q'", b)
+	eventToSend := fmt.Sprintf("%s", b)
 
 	temp := toSend{Path: saltPath, Event: eventToSend}
 	sendChannel <- temp
@@ -51,6 +51,7 @@ func QueueEvent(context echo.Context) error {
 func sendSaltEvent() {
 	for {
 		tmp := <-sendChannel
+		log.Printf("Echoing event %v ", tmp.Event)
 
 		cmd := exec.Command("salt-call", "event.send", tmp.Path, tmp.Event)
 
