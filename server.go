@@ -63,6 +63,7 @@ func sendSaltEvent() {
 }
 
 func main() {
+
 	sendChannel = make(chan toSend, 1000)
 
 	port := ":7010"
