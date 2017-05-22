@@ -62,6 +62,34 @@ func sendSaltEvent() {
 	}
 }
 
+func reboot(context echo.Context) error {
+	log.Printf("Rebooting")
+
+	val, err := exec.Command("sh", "-c", `sudo reboot`).Output()
+
+	log.Printf("%s", val)
+
+	if err != nil {
+		log.Printf("There was an error: %v", err.Error())
+		return context.JSON(http.StatusInternalServerError, "Erorr: "+err.Error())
+	}
+
+	return context.JSON(http.StatusOK, "Rebooting")
+}
+
+func getDockerStatus(context echo.Context) error {
+	log.Printf("Getting docker stuff")
+
+	val, err := exec.Command("docker", "ps").Output()
+
+	if err != nil {
+		log.Printf("There was an error: %v", err.Error())
+		return context.JSON(http.StatusInternalServerError, "Erorr: "+err.Error())
+	}
+
+	return context.String(http.StatusOK, string(val))
+}
+
 func main() {
 
 	sendChannel = make(chan toSend, 1000)
@@ -71,6 +99,8 @@ func main() {
 	secure := router.Group("", echo.WrapMiddleware(authmiddleware.Authenticate))
 
 	secure.POST("/event/:type/:cause", QueueEvent)
+	secure.GET("/reboot", reboot)
+	secure.GET("/dockerStatus", getDockerStatus)
 
 	server := http.Server{
 		Addr:           port,
@@ -80,5 +110,4 @@ func main() {
 	go sendSaltEvent()
 
 	router.StartServer(&server)
-
 }
