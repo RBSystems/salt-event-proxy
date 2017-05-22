@@ -8,7 +8,6 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/byuoitav/authmiddleware"
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
 	"github.com/labstack/echo"
 )
@@ -96,11 +95,10 @@ func main() {
 
 	port := ":7010"
 	router := echo.New()
-	secure := router.Group("", echo.WrapMiddleware(authmiddleware.Authenticate))
 
-	secure.POST("/event/:type/:cause", QueueEvent)
-	secure.GET("/reboot", reboot)
-	secure.GET("/dockerStatus", getDockerStatus)
+	router.POST("/event/:type/:cause", QueueEvent)
+	router.GET("/reboot", reboot)
+	router.GET("/dockerStatus", getDockerStatus)
 
 	server := http.Server{
 		Addr:           port,
