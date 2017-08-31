@@ -173,9 +173,9 @@ func GetDHCPState(context echo.Context) error {
 	}
 
 	if val {
-		return context.JSON(http.StatusOK, "static")
+		return context.JSON(http.StatusOK, "dhcp")
 	}
-	return context.JSON(http.StatusOK, "dhcp")
+	return context.JSON(http.StatusOK, "static")
 
 }
 
