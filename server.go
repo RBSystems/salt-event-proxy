@@ -14,6 +14,7 @@ import (
 
 	"github.com/byuoitav/event-router-microservice/eventinfrastructure"
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
 
 type toSend struct {
@@ -213,6 +214,7 @@ func main() {
 
 	port := ":7010"
 	router := echo.New()
+	router.Use(middleware.CORS())
 
 	router.POST("/event/:type/:cause", QueueEvent)
 	router.GET("/reboot", reboot)
