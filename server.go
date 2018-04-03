@@ -168,6 +168,7 @@ func ToggleDHCP(context echo.Context) error {
 
 func GetDHCPState(context echo.Context) error {
 
+	context.Request().Header.Set("Access-Control-Allow-Origin", "*")
 	val, err := getDHCPStatus()
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err.Error())
